@@ -6,7 +6,17 @@
   "module": "dist/lib.esm.js",
   "types": "dist/lib.d.ts",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "run-s build:clean build:tsc api:extract build:esbuild",
+    "build:clean": "del dist dist-tsc",
+    "build:tsc": "tsc --outDir dist-tsc",
+    "build:esbuild": "run-p build:esbuild:esm build:esbuild:cjs",
+    "build:esbuild:esm": "esbuild dist-tsc/index.js --bundle --format=esm --outfile=dist/lib.esm.js --target=esnext",
+    "build:esbuild:cjs": "esbuild dist-tsc/index.js --bundle --format=cjs --outfile=dist/lib.cjs.js --target=esnext",
+    "api:extract": "api-extractor run",
+    "api:extract:local": "api-extractor run --local",
+    "api:document": "api-documenter markdown -i etc/api-tmp -o api",
+    "api:document:clean": "del api"
   },
   "repository": {
     "type": "git",
@@ -27,15 +37,18 @@
   ],
   "devDependencies": {
     "@jest/types": "^27.2.5",
+    "@microsoft/api-documenter": "^7.13.68",
     "@microsoft/api-extractor": "^7.18.19",
     "@types/jest": "^27.0.2",
     "@typescript-eslint/eslint-plugin": "^5.3.1",
     "@typescript-eslint/parser": "^5.3.1",
+    "del-cli": "^4.0.1",
     "esbuild": "^0.13.13",
     "esbuild-jest": "^0.5.0",
     "eslint": "^8.2.0",
     "eslint-config-alloy": "^4.4.0",
     "jest": "^27.3.1",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.4.1",
     "typescript": "^4.4.4"
   }

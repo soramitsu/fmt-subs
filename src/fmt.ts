@@ -1,6 +1,27 @@
-export type FormatSubstitution = string
+/**
+ * Typing for `fmt` export
+ */
+export interface FmtFn {
+  /**
+   * {@link Fmt} factory via "Template literals"
+   *
+   * @example
+   * ```
+   * fmt`I will be converted to an "Fmt" instance`
+   * ```
+   */
+  (template: TemplateStringsArray, ...expressions: unknown[]): Fmt
 
-export class FmtToken {
+  /**
+   * It is used for actual substitutions
+   */
+  sub: typeof sub
+}
+
+/**
+ * Token that are recognized by `fmt` internally during assembling
+ */
+export class SubstitutionToken {
   /**
    * What will be replaced by substitution
    */
@@ -17,27 +38,34 @@ export class FmtToken {
   }
 }
 
-export function insert(something: unknown, substitution: FormatSubstitution): FmtToken {
-  return new FmtToken(something, substitution)
-}
-
-function isMsg(x: unknown): x is Msg {
-  return x instanceof Msg
-}
-
-function isFmt(x: unknown): x is FmtToken {
-  return x instanceof FmtToken
-}
-
-export class Msg {
-  public static concat(...msgs: Msg[]): Msg {
+/**
+ * Responsible for fmts creation, concatenation and assembling.
+ */
+export class Fmt {
+  /**
+   * Concatenates two or more fmts with each other with preserving of the formatting shape.
+   *
+   * @example
+   * ```ts
+   * const numbers = [0, 1, 2]
+   * const numbersAsFmts = numbers.map((x) => fmt`${fmt.sub(x, '%d')}`)
+   *
+   * // way 1 - `Fmt.concat()`
+   * const singleFmt1 = Fmt.concat(...numbersAsFmts)
+   *
+   * // way 2 - instance's `.concat()`
+   * // also joining them with ', '
+   * const singleFmt2 = numbersAsFmts.reduce((a, b) => a.concat(fmt`, ${b}`))
+   * ```
+   */
+  public static concat(...fmts: Fmt[]): Fmt {
     const sharedTemplate: string[] = []
     const sharedExpressions: unknown[] = []
 
     // edges between template should be joined
     let lastTail: string | null = null
 
-    for (const { template, expressions } of msgs) {
+    for (const { template, expressions } of fmts) {
       const len = template.length
       const tail = template[len - 1]
 
@@ -70,7 +98,7 @@ export class Msg {
       sharedTemplate.push(lastTail)
     }
 
-    return new Msg(sharedTemplate, sharedExpressions)
+    return new Fmt(sharedTemplate, sharedExpressions)
   }
 
   private template: string[]
@@ -82,7 +110,31 @@ export class Msg {
     this.expressions = expressions
   }
 
-  public toConsole(): [string, ...unknown[]] {
+  /**
+   * Shortcut for fmts chaining
+   *
+   * @see {@link Fmt.concat}
+   */
+  public concat(...others: Fmt[]): Fmt {
+    return Fmt.concat(this, ...others)
+  }
+
+  /**
+   * Final chord of `fmt`. Assembles passed template string into a printf-style array of arguments
+   * that you can pass to printing function then.
+   *
+   * @example
+   *
+   * ```ts
+   * console.log(fmt`Hey, ${fmt.sub('Aubrey', '%o')}!`.assemble())
+   * // ['Hey, %o!', 'Aubrey']
+   *
+   * // spread to let `console.log` format your `fmt`!
+   * console.log(...fmt`Hey, ${fmt.sub('Aubrey', '%o')}!`.assemble())
+   * // Hey, 'Aubrey'!
+   * ```
+   */
+  public assemble(): [string, ...unknown[]] {
     const finalStrArray: string[] = []
     const substitutions: unknown[] = []
 
@@ -91,11 +143,11 @@ export class Msg {
 
       const expr = this.expressions[i]
 
-      if (isFmt(expr)) {
+      if (isSubToken(expr)) {
         substitutions.push(expr.something)
         finalStrArray.push(expr.sub)
-      } else if (isMsg(expr)) {
-        const [compiledTemplate, ...extractedSubs] = expr.toConsole()
+      } else if (isFmt(expr)) {
+        const [compiledTemplate, ...extractedSubs] = expr.assemble()
         finalStrArray.push(compiledTemplate)
         substitutions.push(...extractedSubs)
       } else {
@@ -107,37 +159,42 @@ export class Msg {
 
     return [finalStrArray.join(''), ...substitutions]
   }
-
-  public concat(...others: Msg[]): Msg {
-    return Msg.concat(this, ...others)
-  }
 }
 
-export interface MsgFn {
-  (template: TemplateStringsArray, ...expressions: unknown[]): Msg
-  fmt: typeof insert
+/**
+ * Constructs substitution
+ */
+export function sub(something: unknown, substitution: string): SubstitutionToken {
+  return new SubstitutionToken(something, substitution)
+}
+
+function isFmt(x: unknown): x is Fmt {
+  return x instanceof Fmt
+}
+
+function isSubToken(x: unknown): x is SubstitutionToken {
+  return x instanceof SubstitutionToken
 }
 
 /**
  * @remarks
- * Use {@link insert} for formatting
+ * Use {@link sub} for values substitution
  *
- * @param template
- * @param expressions
- * @returns
  * @example
  * ```ts
  * // Simple usage
- * console.log(...msg`Hey, ${msg.fmt('Buddy', '%s')}!`.toConsole())
+ * console.log(...fmt`Hey, ${fmt.sub('Buddy', '%s')}!`.assemble())
  *
- * // Messages nesting
- * const part1 = msg`Foo: ${msg.fmt({ foo: true }, '%o')}`
- * const part2 = msg`Bar: ${msg.fmt({ bar: false }, '%o')}`
- * console.log(...msg`Part 2: ${part2}\nPart 1: ${part1}`.toConsole())
+ * // Nesting fmts to each other
+ * const part1 = fmt`Foo: ${fmt.sub({ foo: true }, '%o')}`
+ * const part2 = fmt`Bar: ${fmt.sub({ bar: false }, '%o')}`
+ * console.log(...fmt`Part 2: ${part2}\nPart 1: ${part1}`.assemble())
  * ```
  */
-export const msg: MsgFn = (template: TemplateStringsArray, ...expressions: unknown[]) => {
-  return new Msg([...template], expressions)
+const fmt: FmtFn = (template: TemplateStringsArray, ...expressions: unknown[]) => {
+  return new Fmt([...template], expressions)
 }
 
-msg.fmt = insert
+fmt.sub = sub
+
+export { fmt }

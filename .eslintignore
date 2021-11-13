@@ -1,6 +1,3 @@
 dist
 dist-tsc
-packages/definition-compiler/tests/samples
-namespace-schema-compiled.ts
-e2e-spa/src/namespace.ts
-e2e-spa/runtime-rollup
+etc

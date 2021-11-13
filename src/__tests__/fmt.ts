@@ -1,66 +1,66 @@
-import { insert, Msg, msg } from '../fmt'
+import { sub, Fmt, fmt } from '../fmt'
 
-test('Message without any formatting', () => {
-  expect(msg`Test message`.toConsole()).toEqual(['Test message'])
+test('String without any substitutions', () => {
+  expect(fmt`Test message`.assemble()).toEqual(['Test message'])
 })
 
-test('Message with single fmt', () => {
-  expect(msg`Format me: ${insert({ value: false }, '%o')}`.toConsole()).toEqual(['Format me: %o', { value: false }])
+test('Message with a single sub', () => {
+  expect(fmt`Format me: ${sub({ value: false }, '%o')}`.assemble()).toEqual(['Format me: %o', { value: false }])
 })
 
-test('Message with multiple fmts', () => {
-  expect(msg`1: ${insert(5, '%s')}\n2: ${insert(1, '%o')}`.toConsole()).toEqual(['1: %s\n2: %o', 5, 1])
+test('Message with multiple subs', () => {
+  expect(fmt`1: ${sub(5, '%s')}\n2: ${sub(1, '%o')}`.assemble()).toEqual(['1: %s\n2: %o', 5, 1])
 })
 
-test('Message with message and another message', () => {
-  const msg1 = msg`${insert(1, '%d')} ${insert(2, '%d')}`
-  const msg2 = msg`< ${insert('henno?', '%o')} >`
-  const msg3 = msg`${msg2} ${msg1}`
+test('Nested fmts', () => {
+  const msg1 = fmt`${sub(1, '%d')} ${sub(2, '%d')}`
+  const msg2 = fmt`< ${sub('henno?', '%o')} >`
+  const msg3 = fmt`${msg2} ${msg1}`
 
-  expect(msg`...${msg3}...`.toConsole()).toEqual(['...< %o > %d %d...', 'henno?', 1, 2])
+  expect(fmt`...${msg3}...`.assemble()).toEqual(['...< %o > %d %d...', 'henno?', 1, 2])
 })
 
-test('Generating array of messages', () => {
+test('Concatenating array of fmts via reducing', () => {
   const numbersMsg = Array.from({ length: 5 }, (v, i) => i)
-    .map((num) => msg`${insert(num, '%o')}`)
-    .reduce((a, b) => a.concat(msg`, ${b}`))
+    .map((num) => fmt`${sub(num, '%o')}`)
+    .reduce((a, b) => a.concat(fmt`, ${b}`))
 
-  expect(numbersMsg.toConsole()).toEqual(['%o, %o, %o, %o, %o', 0, 1, 2, 3, 4])
+  expect(numbersMsg.assemble()).toEqual(['%o, %o, %o, %o, %o', 0, 1, 2, 3, 4])
 })
 
-test('Concatenating multiple msgs at once', () => {
-  expect(msg``.concat(msg`${insert(false, '%o')} `, msg`${insert(true, '%d')}`).toConsole()).toEqual([
-    '%o %d',
-    false,
-    true,
-  ])
+test('Concatenating multiple fmts at once', () => {
+  expect(fmt``.concat(fmt`${sub(false, '%o')} `, fmt`${sub(true, '%d')}`).assemble()).toEqual(['%o %d', false, true])
 })
 
-test('Concatenating nested msg', () => {
-  expect(msg`0 => `.concat(msg`${insert(1, '%d')} => `.concat(msg`${insert(5, '%s')}`)).toConsole()).toEqual([
+test('Another nested concatenation', () => {
+  expect(fmt`0 => `.concat(fmt`${sub(1, '%d')} => `.concat(fmt`${sub(5, '%s')}`)).assemble()).toEqual([
     '0 => %d => %s',
     1,
     5,
   ])
 })
 
-test('Concat via Msg static method', () => {
-  expect(Msg.concat(msg`1 ${insert(4, '%s')} `, msg`${insert(2, '%o')} 2`).toConsole()).toEqual(['1 %s %o 2', 4, 2])
+test('Concatenation via `Fmt.concat()`', () => {
+  expect(Fmt.concat(fmt`1 ${sub(4, '%s')} `, fmt`${sub(2, '%o')} 2`).assemble()).toEqual(['1 %s %o 2', 4, 2])
 })
 
-test('Empty concat returns empty msg', () => {
-  expect(Msg.concat().toConsole()).toEqual([''])
+test('Empty concat assembles to an empty string', () => {
+  expect(Fmt.concat().assemble()).toEqual([''])
 })
 
-test('Concat of multiple msgs - not all of them have content', () => {
+test('Concat of multiple fmts - not all of them have content', () => {
   expect(
-    Msg.concat(
-      msg`AAA`,
-      msg`BBB`,
-      msg` 1: ${1} | 2: ${2} | 3: ${3} `,
-      msg`DDD`,
-      msg` ${insert(1, 's1')}=${msg`?`}=${insert(2, 's2')} `,
-      msg`CCC`,
-    ).toConsole(),
+    Fmt.concat(
+      fmt`AAA`,
+      fmt`BBB`,
+      fmt` 1: ${1} | 2: ${2} | 3: ${3} `,
+      fmt`DDD`,
+      fmt` ${sub(1, 's1')}=${fmt`?`}=${sub(2, 's2')} `,
+      fmt`CCC`,
+    ).assemble(),
   ).toEqual(['AAABBB 1: 1 | 2: 2 | 3: 3 DDD s1=?=s2 CCC', 1, 2])
+})
+
+test('`fmt.sub()` works the same as just `sub()`', () => {
+  expect(fmt`${fmt.sub(1, 'A')} ${sub(2, 'B')}`.assemble()).toEqual(['A B', 1, 2])
 })
