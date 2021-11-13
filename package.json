@@ -1,0 +1,22 @@
+{
+  "name": "fmt-subs",
+  "version": "1.0.0",
+  "description": "Make printf-style formatting a bit easier",
+  "main": "dist/lib.cjs.js",
+  "module": "dist/lib.esm.js",
+  "types": "dist/lib.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0x009922/fmt-subs.git"
+  },
+  "author": "0x009922",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/0x009922/fmt-subs/issues"
+  },
+  "homepage": "https://github.com/0x009922/fmt-subs#readme",
+  "keywords": ["string", "substitutions", "format", "printf", "debug"]
+}
