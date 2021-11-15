@@ -1,10 +1,13 @@
 {
   "name": "fmt-subs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Helps with complex printf-style formatting",
   "main": "dist/lib.cjs.js",
   "module": "dist/lib.esm.js",
   "types": "dist/lib.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "test": "jest",
     "build": "run-s build:clean build:tsc api:extract build:esbuild",

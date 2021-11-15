@@ -33,8 +33,7 @@ jobs:
         run: pnpm run build
 
       - name: Publish
-        run: |
-          echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> .npmrc
-          pnpm publish --no-git-checks
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_PUB_TOKEN }}
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_PUB_TOKEN }}
+          package: ./package.json
