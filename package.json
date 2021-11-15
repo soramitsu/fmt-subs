@@ -8,15 +8,14 @@
   "scripts": {
     "test": "jest",
     "build": "run-s build:clean build:tsc api:extract build:esbuild",
-    "build:clean": "del dist dist-tsc",
+    "build:clean": "del dist dist-tsc docs",
     "build:tsc": "tsc --outDir dist-tsc",
     "build:esbuild": "run-p build:esbuild:esm build:esbuild:cjs",
     "build:esbuild:esm": "esbuild dist-tsc/index.js --bundle --format=esm --outfile=dist/lib.esm.js --target=esnext",
     "build:esbuild:cjs": "esbuild dist-tsc/index.js --bundle --format=cjs --outfile=dist/lib.cjs.js --target=esnext",
     "api:extract": "api-extractor run",
     "api:extract:local": "api-extractor run --local",
-    "api:document": "api-documenter markdown -i etc/api-tmp -o api",
-    "api:document:clean": "del api"
+    "api:document": "api-documenter markdown -i etc/api-tmp -o api"
   },
   "repository": {
     "type": "git",
