@@ -1,6 +1,3 @@
-/**
- * Typing for `fmt` export
- */
 export interface FmtFn {
   /**
    * {@link Fmt} factory via "Template literals"
@@ -45,6 +42,25 @@ export class Fmt {
   /**
    * Concatenates two or more fmts with each other with preserving of the formatting shape.
    *
+   * @remarks
+   * By the way, you can always concatenate multiple fmts with this construction:
+   *
+   * ```ts
+   * fmt`${fmt`1`}${fmt`2`}`
+   * ```
+   *
+   * But it may produce a lot of nested fmts inside of each other and it will damage performance:
+   *
+   * ```ts
+   * const aLotOfFmts = Array.from({ length: 1000 }, () => fmt`some fmt`)
+   *
+   * // non-performant way
+   * aLotOfFmts.reduce((a, b) => fmt`${a} ${b}`)
+   *
+   * // performant way
+   * Fmt.concat(...aLotOfFmts)
+   * ```
+   *
    * @example
    * ```ts
    * const numbers = [0, 1, 2]
@@ -55,7 +71,7 @@ export class Fmt {
    *
    * // way 2 - instance's `.concat()`
    * // also joining them with ', '
-   * const singleFmt2 = numbersAsFmts.reduce((a, b) => a.concat(fmt`, ${b}`))
+   * const singleFmt2 = numbersAsFmts.reduce((a, b) => a.concat(fmt`, `, b))
    * ```
    */
   public static concat(...fmts: Fmt[]): Fmt {
@@ -163,6 +179,20 @@ export class Fmt {
 
 /**
  * Constructs substitution
+ *
+ * @example
+ * ```ts
+ * import { sub, fmt } from 'fmt-subs'
+ *
+ * const fmtInstance = fmt`Hello, ${sub({ value: 'World' }, '%o')}!`
+ *
+ * // deep equality
+ * fmtInstance.assemble() == ['Hello, %o!', { value: 'World' }]
+ * ```
+ *
+ * @param something - what to substitute
+ * @param substitution - an actual string substitution
+ * @returns token that could be used inside of `fmt` template literal
  */
 export function sub(something: unknown, substitution: string): SubstitutionToken {
   return new SubstitutionToken(something, substitution)
@@ -177,6 +207,8 @@ function isSubToken(x: unknown): x is SubstitutionToken {
 }
 
 /**
+ * Tag function for template literals which wraps its contents into a {@link Fmt} instance.
+ *
  * @remarks
  * Use {@link sub} for values substitution
  *

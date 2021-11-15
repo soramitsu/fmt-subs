@@ -13,10 +13,10 @@ export class Fmt {
     concat(...others: Fmt[]): Fmt;
 }
 
-// @public (undocumented)
+// @public
 export const fmt: FmtFn;
 
-// @public
+// @public (undocumented)
 export interface FmtFn {
     (template: TemplateStringsArray, ...expressions: unknown[]): Fmt;
     sub: typeof sub;
