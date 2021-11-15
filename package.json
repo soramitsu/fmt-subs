@@ -42,6 +42,7 @@
     "log"
   ],
   "devDependencies": {
+    "@changesets/cli": "^2.18.0",
     "@jest/types": "^27.2.5",
     "@microsoft/api-documenter": "^7.13.68",
     "@microsoft/api-extractor": "^7.18.19",
