@@ -75,4 +75,4 @@ fmt`Hey, ${sub(5, '%d')}`.assemble() == ['Hey, %d', 5]
 
 ## API
 
-See [here](https://0x009922.github.io/fmt-subs/).
+See [here](https://soramitsu.github.io/fmt-subs/).
