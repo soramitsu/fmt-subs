@@ -3,4 +3,4 @@ dist
 dist-tsc
 .vscode
 etc/api-tmp
-docs
+dist-api-docs

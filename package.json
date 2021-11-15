@@ -15,7 +15,7 @@
     "build:esbuild:cjs": "esbuild dist-tsc/index.js --bundle --format=cjs --outfile=dist/lib.cjs.js --target=esnext",
     "api:extract": "api-extractor run",
     "api:extract:local": "api-extractor run --local",
-    "api:document": "api-documenter markdown -i etc/api-tmp -o api"
+    "api:document": "api-documenter markdown -i etc/api-tmp -o dist-api-docs"
   },
   "repository": {
     "type": "git",
