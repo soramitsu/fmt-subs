@@ -1,4 +1,4 @@
-name: CD
+name: Pushing API to GitHub Pages
 
 on:
   push:
