@@ -1,5 +1,11 @@
 # fmt-subs
 
+## 1.0.3
+
+### Patch Changes
+
+- chore: empty patch to test updated CI
+
 ## 1.0.2
 
 ### Patch Changes
