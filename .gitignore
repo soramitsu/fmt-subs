@@ -4,6 +4,3 @@ dist-tsc
 .vscode
 etc/api-tmp
 dist-api-docs
-.pnpm-store/
-.scannerwork/
-report/
