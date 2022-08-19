@@ -1,9 +1,9 @@
 {
   "name": "fmt-subs",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Helps with complex printf-style formatting",
-  "main": "dist/lib.cjs.js",
-  "module": "dist/lib.esm.js",
+  "main": "dist/lib.cjs",
+  "module": "dist/lib.mjs",
   "types": "dist/lib.d.ts",
   "files": [
     "dist"
@@ -15,8 +15,8 @@
     "build:clean": "del dist dist-tsc docs",
     "build:tsc": "tsc --outDir dist-tsc",
     "build:esbuild": "run-p build:esbuild:esm build:esbuild:cjs",
-    "build:esbuild:esm": "esbuild dist-tsc/index.js --bundle --format=esm --outfile=dist/lib.esm.js --target=esnext",
-    "build:esbuild:cjs": "esbuild dist-tsc/index.js --bundle --format=cjs --outfile=dist/lib.cjs.js --target=esnext",
+    "build:esbuild:esm": "esbuild dist-tsc/index.js --bundle --format=esm --outfile=dist/lib.mjs --target=esnext",
+    "build:esbuild:cjs": "esbuild dist-tsc/index.js --bundle --format=cjs --outfile=dist/lib.cjs --target=esnext",
     "api:extract": "api-extractor run",
     "api:extract:local": "api-extractor run --local",
     "api:document": "api-documenter markdown -i etc/api-tmp -o dist-api-docs",

@@ -1,5 +1,11 @@
 # fmt-subs
 
+## 1.1.0
+
+### Minor Changes
+
+- d830ba4: Update build artifacts: use `lib.mjs` for `module` and `lib.cjs` for `main`
+
 ## 1.0.3
 
 ### Patch Changes
