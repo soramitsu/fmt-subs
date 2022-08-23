@@ -10,6 +10,6 @@ def pipeline = new org.js.LibPipeline(steps: this,
   sonarProjectName: 'fmt-subs',
   sonarProjectKey: 'jp.co.soramitsu:fmt-subs',
   libPushBranches: ['master', 'duty/remove-CI-artifacts'],
-  dockerImageTags: ['master': 'latest', 'duty/remove-CI-artifacts': 'duty'],
+  dockerImageTags: ['master': 'latest'],
   )
 pipeline.runPipeline()
