@@ -1,4 +1,4 @@
-@Library('jenkins-library@duty/remove-results-of-functions' ) _
+@Library('jenkins-library' ) _
 
 def pipeline = new org.js.LibPipeline(steps: this,
   buildDockerImage: 'docker.soramitsu.co.jp/build-tools/node:14-ubuntu-cypress',
@@ -9,7 +9,5 @@ def pipeline = new org.js.LibPipeline(steps: this,
   npmRegistries: [:],
   sonarProjectName: 'fmt-subs',
   sonarProjectKey: 'jp.co.soramitsu:fmt-subs',
-  libPushBranches: ['master', 'duty/remove-CI-artifacts'],
-  dockerImageTags: ['master': 'latest'],
   )
 pipeline.runPipeline()
