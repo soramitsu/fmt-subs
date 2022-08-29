@@ -8,6 +8,12 @@
   "files": [
     "dist"
   ],
+  "exports": {
+    ".": {
+      "import": "./dist/lib.mjs",
+      "require": "./dist/lib.cjs"
+    }
+  },
   "scripts": {
     "test": "jest",
     "build": "run-s build:clean build:tsc api:extract build:esbuild",
