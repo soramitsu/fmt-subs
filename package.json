@@ -1,6 +1,6 @@
 {
   "name": "fmt-subs",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Helps with complex printf-style formatting",
   "main": "dist/lib.cjs",
   "module": "dist/lib.mjs",

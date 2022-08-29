@@ -1,5 +1,11 @@
 # fmt-subs
 
+## 1.1.1
+
+### Patch Changes
+
+- 21db6ab: **fix**: specify `exports` in `package.json`
+
 ## 1.1.0
 
 ### Minor Changes
