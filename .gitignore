@@ -4,3 +4,4 @@ dist-tsc
 .vscode
 etc/api-tmp
 dist-api-docs
+.DS_Store
