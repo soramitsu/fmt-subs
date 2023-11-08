@@ -15,7 +15,7 @@
     }
   },
   "scripts": {
-    "test": "jest",
+    "test": "jest --coverage",
     "build": "run-s build:clean build:tsc api:extract build:esbuild",
     "build:local": "run-s build:clean build:tsc api:extract:local build:esbuild",
     "build:clean": "del dist dist-tsc docs",

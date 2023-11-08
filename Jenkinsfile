@@ -9,5 +9,7 @@ def pipeline = new org.js.LibPipeline(steps: this,
   npmRegistries: [:],
   sonarProjectName: 'fmt-subs',
   sonarProjectKey: 'jp.co.soramitsu:fmt-subs',
+  sonarSrcPath: 'src',
+  dojoProductType: 'Dev'
   )
 pipeline.runPipeline()
